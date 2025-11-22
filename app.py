@@ -31,6 +31,12 @@ app = Flask(__name__)
 # Generate a secret key if not provided (for production, set FLASK_SECRET_KEY env var)
 app.secret_key = os.environ.get("FLASK_SECRET_KEY") or os.urandom(32).hex()
 
+# Security: Ensure cookies are only sent over HTTPS in production
+if not os.environ.get("FLASK_DEBUG"):
+    app.config['SESSION_COOKIE_SECURE'] = True
+    app.config['SESSION_COOKIE_HTTPONLY'] = True
+    app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+
 # Configuration (optional - users can provide their own API key)
 # If config.yaml exists, it's used for default settings, but users can override with their own key
 config_file = Path(__file__).parent / "config.yaml"

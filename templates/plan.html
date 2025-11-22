@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Video Plan{% endblock %}
+
+{% block content %}
+<div class="plan-container">
+    <h2>Your Video Plan</h2>
+    <p>Scene: <strong>{{ session.scene_description }}</strong></p>
+    <p>Total steps: <strong>{{ session.num_clips }}</strong></p>
+    
+    <div class="starting-image-section">
+        <h3>Starting Image</h3>
+        {% if image_data_url %}
+            <div class="image-preview">
+                <img src="{{ image_data_url }}" alt="Starting image">
+            </div>
+            <div class="image-actions">
+                <button onclick="copyToClipboard('{{ image_data_url }}', this)" class="btn btn-secondary">
+                    Copy Image (Data URL)
+                </button>
+                <a href="{{ url_for('get_image', session_id=session.session_id, step_num=1) }}" 
+                   download="starting_image.jpg" 
+                   class="btn btn-secondary">
+                    Download Image
+                </a>
+            </div>
+        {% endif %}
+    </div>
+    
+    <div class="prompts-section">
+        <h3>Generated Prompts</h3>
+        <ol class="prompts-list">
+            {% for prompt in session.prompts %}
+                <li class="prompt-item">
+                    <div class="prompt-text">{{ prompt }}</div>
+                    <button onclick="copyToClipboard('{{ prompt }}', this)" class="btn btn-small">
+                        Copy Prompt
+                    </button>
+                </li>
+            {% endfor %}
+        </ol>
+    </div>
+    
+    <div class="actions">
+        <a href="{{ url_for('step', session_id=session.session_id, step_num=1) }}" class="btn btn-primary">
+            Start Step 1
+        </a>
+    </div>
+</div>
+{% endblock %}
+

@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block title %}Step {{ step_num }}{% endblock %}
+
+{% block content %}
+<div class="step-container">
+    <div class="step-header">
+        <h2>Step {{ step_num }} of {{ session.num_clips }}</h2>
+        <div class="progress">
+            <div class="progress-bar" style="width: {{ (step_num / session.num_clips * 100) }}%"></div>
+        </div>
+    </div>
+    
+    {% if is_complete %}
+        <div class="alert alert-success">
+            ✓ This step is already complete. You can proceed to the next step or upload a new video to replace it.
+        </div>
+    {% endif %}
+    
+    <div class="step-content">
+        <div class="step-section">
+            <h3>1. Copy the Starting Image</h3>
+            <div class="image-preview">
+                <img src="{{ image_data_url }}" alt="Step {{ step_num }} starting image">
+            </div>
+            <div class="image-actions">
+                <button onclick="copyToClipboard('{{ image_data_url }}', this)" class="btn btn-secondary">
+                    Copy Image (Data URL)
+                </button>
+                <a href="{{ url_for('get_image', session_id=session.session_id, step_num=step_num) }}" 
+                   download="step_{{ step_num }}_image.jpg" 
+                   class="btn btn-secondary">
+                    Download Image
+                </a>
+            </div>
+            <p class="help-text">Copy this image and paste it into xAI when creating your video.</p>
+        </div>
+        
+        <div class="step-section">
+            <h3>2. Copy the Prompt</h3>
+            <div class="prompt-box">
+                <div class="prompt-text">{{ prompt }}</div>
+                <button onclick="copyToClipboard('{{ prompt }}', this)" class="btn btn-secondary">
+                    Copy Prompt
+                </button>
+            </div>
+            <p class="help-text">Copy this prompt and use it in xAI along with the image above.</p>
+        </div>
+        
+        <div class="step-section">
+            <h3>3. Create Video in xAI</h3>
+            <p>Go to xAI and create a video using:</p>
+            <ul>
+                <li>The starting image (copied above)</li>
+                <li>The prompt (copied above)</li>
+            </ul>
+            <p>Download the created video to your computer.</p>
+        </div>
+        
+        <div class="step-section">
+            <h3>4. Upload Your Video</h3>
+            <form method="POST" action="{{ url_for('upload', session_id=session.session_id, step_num=step_num) }}" 
+                  enctype="multipart/form-data" class="upload-form">
+                <div class="form-group">
+                    <label for="video">Select Video File:</label>
+                    <input 
+                        type="file" 
+                        id="video" 
+                        name="video" 
+                        accept="video/mp4,video/mov,video/avi"
+                        required
+                    >
+                </div>
+                <button type="submit" class="btn btn-primary">Upload Video</button>
+            </form>
+        </div>
+    </div>
+    
+    <div class="step-navigation">
+        {% if step_num > 1 %}
+            <a href="{{ url_for('step', session_id=session.session_id, step_num=step_num - 1) }}" 
+               class="btn btn-secondary">
+                ← Previous Step
+            </a>
+        {% endif %}
+        
+        {% if step_num < session.num_clips %}
+            <a href="{{ url_for('step', session_id=session.session_id, step_num=step_num + 1) }}" 
+               class="btn btn-secondary">
+                Next Step →
+            </a>
+        {% else %}
+            {% if session.uploaded_videos|length >= session.num_clips %}
+                <a href="{{ url_for('combine', session_id=session.session_id) }}" 
+                   class="btn btn-primary">
+                    Combine Videos →
+                </a>
+            {% endif %}
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+

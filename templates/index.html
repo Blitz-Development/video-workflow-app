@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}Start New Video Workflow{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h2>Create New Video Workflow</h2>
+    <p>Enter your scene description and starting image. The AI will break it into step-by-step prompts.</p>
+    
+    <form method="POST" action="{{ url_for('create') }}" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="openai_api_key">OpenAI API Key:</label>
+            <input 
+                type="password" 
+                id="openai_api_key" 
+                name="openai_api_key" 
+                required
+                placeholder="sk-proj-..."
+                autocomplete="off"
+            >
+            <small class="help-text" style="display: block; margin-top: 5px; color: #666; font-size: 13px;">
+                Your API key is stored only in your session (memory) and never saved to disk. 
+                Get your key from <a href="https://platform.openai.com/api-keys" target="_blank">OpenAI</a>.
+            </small>
+        </div>
+        
+        <div class="form-group">
+            <label for="scene_description">Scene Description:</label>
+            <textarea 
+                id="scene_description" 
+                name="scene_description" 
+                rows="6" 
+                required
+                placeholder="Describe the video scene you want to create. The AI will break it into smaller prompts."
+            ></textarea>
+        </div>
+        
+        <div class="form-group">
+            <label for="num_clips">Number of Clips:</label>
+            <input 
+                type="number" 
+                id="num_clips" 
+                name="num_clips" 
+                value="4" 
+                min="1" 
+                max="20" 
+                required
+            >
+        </div>
+        
+        <div class="form-group">
+            <label>Starting Image:</label>
+            <div class="image-input-options">
+                <div class="option">
+                    <label for="starting_image_file">Upload Image File:</label>
+                    <input 
+                        type="file" 
+                        id="starting_image_file" 
+                        name="starting_image_file" 
+                        accept="image/jpeg,image/jpg,image/png"
+                    >
+                </div>
+                <div class="option-divider">OR</div>
+                <div class="option">
+                    <label for="starting_image_url">Image URL:</label>
+                    <input 
+                        type="url" 
+                        id="starting_image_url" 
+                        name="starting_image_url" 
+                        placeholder="https://example.com/image.jpg"
+                    >
+                </div>
+            </div>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Generate Plan</button>
+    </form>
+</div>
+{% endblock %}
+

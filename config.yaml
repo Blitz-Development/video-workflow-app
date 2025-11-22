@@ -1,0 +1,78 @@
+# =============================
+# VIDEO GENERATION CONFIGURATION
+# =============================
+
+api:
+  # OpenAI Sora API
+  base_url: "https://api.openai.com/v1"
+  
+  # Endpoint to request video generation
+  generate_endpoint: "https://api.openai.com/v1/videos"
+  
+  # Endpoint to check video status (if needed)
+  # Leave empty if Sora returns URL immediately
+  status_endpoint_template: ""  # TODO: Confirm if Sora requires polling
+  
+  # Sora model to use
+  sora_model: "sora-2-pro"
+
+output:
+  # Directory where all generated clips and final output will be stored
+  directory: "generated_clips"
+  
+  # How often to poll API status (seconds)
+  poll_interval_seconds: 5
+
+generation:
+  # The main scene description to be split into parts
+  scene_description: |
+    Maak een rustige, professionele 2D-animatievideo waarin een eenvoudige, vriendelijke tekenstijl wordt gebruikt. De video laat een persoon zien die wordt toegeschreeuwd door iemand anders.
+    
+    Scène 1 – Reactie op schreeuwen: Toon dat iemand tegen het hoofdpersonage schreeuwt. Het hoofdpersonage blijft kalm en zegt op rustige toon dat hij of zij het niet prettig vindt wanneer iemand schreeuwt.
+    
+    Scène 2 – Gevoelens benoemen: De ander blijft schreeuwen. Laat een subtiele visuele weergave zien van de boosheid en irritatie die het hoofdpersonage voelt. Het hoofdpersonage gaat niet terug schreeuwen, maar zegt rustig dat hij of zij merkt dat er boosheid opkomt.
+    
+    Scène 3 – Uit de situatie stappen: Wanneer het schreeuwen doorgaat, stapt het hoofdpersonage weg uit de situatie. Toon duidelijk dat dit een bewuste, rustige keuze is.
+    
+    Scène 4 – Rust en hervatten gesprek: Toon een overgang naar later. De situatie is gekalmeerd. Laat zien dat het hoofdpersonage en de ander weer op een rustige manier in gesprek gaan.
+    
+    Gebruik warme kleuren en zachte animaties. Geen humoristische stijl; de toon moet serieus en ondersteunend zijn. Voeg subtiele achtergrondmuziek toe die rust en veiligheid uitstraalt.
+  
+  # Local path to starting image (will be uploaded to Supabase automatically)
+  starting_image_path: "starting_image.jpeg"
+  
+  # If starting_image_path is not used, fallback to URL (leave empty to auto-upload)
+  starting_image_url: ""
+  
+  # Number of clips to generate (4 scenes in your prompt)
+  num_clips: 4
+  
+  # Video duration per clip in seconds (Sora: 1-20 seconds)
+  clip_duration: "8"
+  
+  # Video size/resolution for Sora (WIDTHxHEIGHT)
+  # Valid: 1920x1080, 1280x720, 854x480, 640x360, 1080x1920, 720x1280, 480x854, 360x640
+  video_size: "1280x720"
+
+# =============================
+# CLIP PLANNING
+# =============================
+
+planning:
+  # Uses OpenAI GPT (gpt-4o-mini) to create intelligent sequential prompts
+  # Falls back to simple splitting if API fails
+  enabled: true
+
+# =============================
+# FRAME CHAINING (Auto Narrative)
+# =============================
+
+frame_chaining:
+  # Set to true to automatically use each clip's last frame as the next clip's starting image
+  # This creates visual continuity between clips
+  # Requires SUPABASE_URL and SUPABASE_KEY environment variables
+  enabled: true
+  
+  # Supabase Storage bucket for uploaded frames
+  bucket: "video-frames"
+
